@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Key Manager</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+
+            /* ===== Brand ===== */
+            --primary: #2EEB78;
+            --primary-hover: #20D96A;
+            --primary-dark: #13B85A;
+            --accent: #00C896;
+
+            /* ===== Backgrounds ===== */
+            --bg: #F7F9FC;
+            --surface: #FFFFFF;
+            --surface-hover: #F2F5F8;
+
+            /* ===== Text ===== */
+            --text: #1F2937;
+            --text-light: #6B7280;
+            --text-muted: #9CA3AF;
+
+            /* ===== Borders ===== */
+            --border: #E5E7EB;
+            --border-dark: #CBD5E1;
+
+            /* ===== States ===== */
+            --success: #22C55E;
+            --warning: #F59E0B;
+            --danger: #EF4444;
+            --info: #3B82F6;
+
+            /* ===== Shadows ===== */
+            --shadow-sm: 0 2px 6px rgba(0, 0, 0, .06);
+            --shadow: 0 8px 24px rgba(0, 0, 0, .08);
+            --shadow-lg: 0 14px 40px rgba(0, 0, 0, .12);
+            --shadow-primary: 0 10px 30px rgba(46, 235, 120, .20);
+
+            /* ===== Radius ===== */
+            --radius-sm: 8px;
+            --radius: 12px;
+            --radius-lg: 18px;
+
+            /* ===== Header ===== */
+            --header-bg: linear-gradient(135deg, #2EEB78, #16D965);
+
+            /* ===== Icon ===== */
+            --icon-bg: linear-gradient(135deg, #2EEB78, #16D965);
+            --icon-color: #FFFFFF;
+
+            /* ===== Animations ===== */
+            --transition: all .25s ease;
+        }
+
+        body {
+            background: linear-gradient(135deg, #ffffff, #effdec);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        .container {
+            margin-top: 90px;
+            justify-content: center;
+            justify-items: center;
+            width: calc(100vw - 2px);
+        }
+
+        .card {
+            background: white;
+            border: 1px solid #00000051;
+            box-shadow: 0px 0px 12px #00000038;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            width: 800px;
+            display: flex;
+            flex-direction: row;
+            gap: 15px;
+        }
+
+        .card-icon {
+            font-size: 1.8rem;
+            padding: 3px 11px;
+            width: fit-content;
+            border-radius: 12px;
+
+            background: var(--primary);
+            color: white;
+        }
+
+        .app-header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+
+            height: 64px;
+            padding: 0 24px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-bottom: 1px solid rgba(255, 255, 255, .15);
+
+            box-shadow:
+                0 8px 24px rgba(0, 0, 0, .15),
+                inset 0 -1px rgba(255, 255, 255, .15);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+
+            user-select: none;
+        }
+
+        .brand h1 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: white;
+            letter-spacing: -.04em;
+        }
+
+        .nav-links {
+            text-align: center;
+            display: flex;
+            flex-direction: row;
+            gap: 15px;
+            margin-top: auto;
+            margin-bottom: auto;
+        }
+
+        .nav-links i {
+            font-size: 1.3rem;
+            color: var(--text);
+            background: var(--surface);
+            padding: 5px 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all .2s ease;
+            box-shadow: 0 4px 12px rgba(20, 184, 86, .3);
+        }
+
+        .nav-links i:hover {
+            background: var(--surface-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 18px rgba(20, 184, 86, .4);
+        }
+
+        .nav-links i:active {
+            transform: scale(.95);
+        }
+
+        .data {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+
+        .label {
+            font-size: 1rem;
+            color: var(--text-light);
+        }
+
+        .api-key {
+            color: var(--text-muted);
+            letter-spacing: 0.1rem;
+            font-size: 1.5rem;
+            margin-bottom: -10px;
+        }
+
+        .api {
+            display: flex;
+            width: 100%;
+            flex-direction: row;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .api input {
+            font-size: 0.8rem;
+            transform: translateY(-6px);
+            background: none;
+            border: none;
+
+            width: 90%;
+            overflow-x: auto;
+            white-space: nowrap;
+
+            font-family: system-ui;
+        }
+
+        .look {
+            color: var(--text-light);
+            font-size: 1.2rem;
+            transition: var(--transition);
+        }
+
+        .look:hover {
+            color: #6b7280b2;
+            transform: scale(1.1);
+        }
+
+        .copy {
+            color: var(--text-light);
+            font-size: 1.2rem;
+            transition: var(--transition);
+        }
+
+        .copy:hover {
+            transform: scale(1.1);
+        }
+
+        .delete {
+            color: var(--danger);
+            font-size: 1.2rem;
+            transition: var(--transition);
+        }
+
+        .delete:hover {
+            transform: scale(1.1);
+            color: #ef4444af;
+        }
+
+        .copy:hover {
+            color: var(--text-muted);
+            transition: var(--transition);
+        }
+
+        .copy.copied {
+            color: var(--text);
+            transform: scale(1.1);
+        }
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, .45);
+            backdrop-filter: blur(5px);
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            opacity: 0;
+            pointer-events: none;
+            transition: .2s;
+        }
+
+        .modal-overlay.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-card {
+            width: 420px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, .2);
+            overflow: hidden;
+            animation: pop .2s ease;
+        }
+
+        @keyframes pop {
+            from {
+                transform: scale(.9);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 22px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .modal-header h3 {
+            color: #222;
+        }
+
+        .modal-header i {
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        .modal-body {
+            padding: 22px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .modal-body label {
+            color: #666;
+            font-size: .9rem;
+        }
+
+        .modal-body input {
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            outline: none;
+        }
+
+        .modal-body input:focus {
+            border-color: #2EEB78;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            padding: 18px 22px;
+            border-top: 1px solid #eee;
+        }
+
+        .cancel-btn {
+            background: #eee;
+            color: #333;
+        }
+
+        .save-btn {
+            background: #2EEB78;
+            color: white;
+        }
+
+        .modal-footer button {
+            border: none;
+            padding: 10px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: .2s;
+        }
+
+        .modal-footer button:hover {
+            transform: translateY(-2px);
+        }
+
+        .logout {
+            color: white;
+            cursor: pointer;
+            transition: .2s;
+        }
+    </style>
+
+</head>
+
+<body>
+    <header class="app-header">
+        <div class="brand">
+            <h1>API Vault</h1>
+        </div>
+        <div class="nav-links">
+            <i class="bi bi-plus" onclick="openModal()"></i>
+            <i class="bi bi-box-arrow-right logout" onclick="logout()" title="Logout"></i>
+        </div>
+    </header>
+
+    <div class="container"></div>
+    <div class="modal-overlay" id="addModal">
+        <div class="modal-card">
+
+            <div class="modal-header">
+                <h3>Add API</h3>
+                <i class="bi bi-x-lg" onclick="closeModal()"></i>
+            </div>
+
+            <div class="modal-body">
+
+                <label>Name</label>
+                <input id="add_name" type="text" placeholder="OpenAI">
+
+                <label>Website</label>
+                <input id="add_site" type="text" placeholder="https://platform.openai.com">
+
+                <label>API Key</label>
+                <input id="add_key" type="password" placeholder="sk-...">
+
+            </div>
+
+            <div class="modal-footer">
+                <button class="cancel-btn" onclick="closeModal()">Cancel</button>
+                <button class="save-btn" onclick="addAPI()">Save</button>
+            </div>
+
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const add_name = document.getElementById("add_name");
+        const add_site = document.getElementById("add_site");
+        const add_key = document.getElementById("add_key");
+
+        async function logout() {
+
+            const req = await fetch("/api/v1/sessions/logout", {
+                method: "POST"
+            });
+
+            if (req.ok) {
+                window.location.href = "/";
+            } else {
+                alert("Failed to logout.");
+            }
+
+        }
+
+        async function addAPI() {
+            const req = await fetch("/api/v1/add_key", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    name: add_name.value,
+                    website: add_site.value,
+                    api_key: add_key.value
+                })
+            });
+
+            closeModal();
+
+            setTimeout(() => {
+                loadKeys();
+            }, 10)
+
+        }
+
+        function openModal() {
+            document.getElementById("addModal").classList.add("show");
+        }
+
+        function closeModal() {
+            document.getElementById("addModal").classList.remove("show");
+        }
+
+        async function deleteAPI(value) {
+
+            const req = await fetch("/api/v1/delete_key", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    name: value
+                })
+            });
+
+            setTimeout(() => {
+                loadKeys();
+            }, 10)
+
+        }
+
+        async function loadKeys() {
+
+            const req = await fetch("/api/v1/list_keys");
+
+            const data = await req.json();
+
+            const tbody = document.querySelector(".container");
+
+            tbody.innerHTML = "";
+
+            data.forEach(key => {
+
+                tbody.innerHTML += `
+                    <div class="card">
+                        <i class="bi bi-key-fill card-icon"></i>
+
+                        <div class="data">
+                            <span class="label">${key.name}</span>
+
+                            <div class="api">
+                                <input class="api-key" type="password" disabled value="${key.api_key}">
+                                <i class="bi bi-eye-slash look"></i>
+                                <i class="bi bi-clipboard copy"
+                                onclick="copyToClipboard('${key.api_key}', this)"></i>
+                                <i class="bi bi-x-lg delete" onclick="deleteAPI('${key.name}')"></i>
+                            </div>
+
+                        </div>
+                    </div>
+                    `;
+
+            });
+
+            document.querySelectorAll(".look").forEach(eye => {
+
+                const input = eye.previousElementSibling;
+
+                eye.addEventListener("mousedown", () => {
+                    eye.classList.replace("bi-eye-slash", "bi-eye");
+                    input.type = "text";
+                });
+
+                eye.addEventListener("mouseup", () => {
+                    eye.classList.replace("bi-eye", "bi-eye-slash");
+                    input.type = "password";
+                });
+
+                eye.addEventListener("mouseleave", () => {
+                    eye.classList.replace("bi-eye", "bi-eye-slash");
+                    input.type = "password";
+                });
+
+            });
+        }
+
+        async function copyToClipboard(text, icon) {
+            try {
+                icon.classList.add("copied");
+
+                setTimeout(() => {
+                    icon.classList.remove("copied");
+                }, 200);
+                console.log("Copied!");
+            } catch (err) {
+                console.error("Failed to copy:", err);
+            }
+        }
+
+        loadKeys();
+
+
+
+    </script>
+
+</body>
+
+</html>
