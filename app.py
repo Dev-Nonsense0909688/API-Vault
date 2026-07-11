@@ -2,7 +2,7 @@ from api import vault_api
 from middleware.validator import validation
 from core.config import SECRET_KEY
 
-from flask import Flask, render_template, session, redirect
+from flask import Flask, render_template, session
 
 app = Flask(__name__)
 app.secret_key = SECRET_KEY

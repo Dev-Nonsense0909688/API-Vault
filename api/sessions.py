@@ -13,8 +13,8 @@ def login():
         if password == PASSWORD:
             session["token"] = token()
             
-            return jsonify({"success": True}), 200
-        return jsonify({"success": False, "message": "Invalid parameters", "token": token()}), 401
+            return jsonify({"success": True, "token": token()}), 200
+        return jsonify({"success": False, "message": "Invalid parameters"}), 401
     except:
         return jsonify({"success": False, "message": "Invalid parameters"}), 401
     
