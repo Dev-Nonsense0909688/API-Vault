@@ -17,9 +17,7 @@
 
             /* ===== Brand ===== */
             --primary: #2EEB78;
-            --primary-hover: #20D96A;
             --primary-dark: #13B85A;
-            --accent: #00C896;
 
             /* ===== Backgrounds ===== */
             --bg: #F7F9FC;
@@ -529,11 +527,20 @@
 
         async function copyToClipboard(text, icon) {
             try {
-                icon.classList.add("copied");
+                if (navigator.clipboard && window.isSecureContext) {
+                    await navigator.clipboard.writeText(text);
+                } else {
+                    const input = document.createElement("textarea");
+                    input.value = text;
+                    document.body.appendChild(input);
+                    input.select();
+                    document.execCommand("copy");
+                    document.body.removeChild(input);
+                }
 
-                setTimeout(() => {
-                    icon.classList.remove("copied");
-                }, 200);
+                icon.classList.add("copied");
+                setTimeout(() => icon.classList.remove("copied"), 200);
+
                 console.log("Copied!");
             } catch (err) {
                 console.error("Failed to copy:", err);

@@ -1,9 +1,10 @@
 from .hashing import hash_key
+from .utils import get_cpu_uuid
 
 from cryptography.fernet import Fernet
-import socket
 
-f =  Fernet(hash_key(socket.gethostname()))
+
+f = Fernet(hash_key(get_cpu_uuid()))
 
 def encrypt(data: str) -> bytes:
     return f.encrypt(data.encode())

@@ -1,8 +1,11 @@
 from .hashing import hash_token
+from .utils import get_cpu_uuid
+
 import time
-import socket
+
 
 def token():
-    hostname = socket.gethostname()
-    full_token = hostname + "(:)" +time.strftime("%Y-%m-%d")
+    uuid = get_cpu_uuid()
+
+    full_token = uuid + "(:)" +time.strftime("%Y-%m-%d")
     return hash_token(full_token)
